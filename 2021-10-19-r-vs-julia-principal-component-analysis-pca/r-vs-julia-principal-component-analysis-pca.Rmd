@@ -1,0 +1,66 @@
+---
+title: "R vs Julia: Principal Component Analysis (PCA)"
+description: |
+  kvdwdvkmsvpkm
+author:
+  - name: Guy F. Sutton
+    url: https://twitter.com/stats_ecology/
+date: 10-19-2021
+base_url: https://statsforscaredecologists.netlify.app/
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+draft: true
+categories:
+  - Julia
+  - R
+  - R vs Julia
+  - PCA
+  - tidyverse
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# Setup Julia
+library(JuliaCall)
+# setup <- julia_setup()
+
+# Load requires packages 
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, 
+               emmeans, 
+               DHARMa,
+               distill,
+               glmmTMB,
+               ggfortify,
+               here,
+               car) 
+```
+
+# Background 
+
+The scared ecologist will often find themselves confronted with a large number of variables in their datasets. Thankfully, they are aware that fitting each variable as a predictor in their model(s) is likely not the optimal approach. Rather, they need to reduce the large number of variables down into a few variables that preserve as much of the original variance possible.  
+
+Enter: Principal Component Analysis (PCA)  
+
+Principal Component Analysis (hereafter *PCA*)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

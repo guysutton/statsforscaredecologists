@@ -1,0 +1,130 @@
+---
+title: "Species accumulation curves in R: Part 1"
+description: |
+  Basic species accumulation curve
+date: 01-14-2022
+author:
+  - name: Guy F. Sutton
+    url: https://twitter.com/stats_ecology
+base_url: https://statsforscaredecologists.netlify.app/
+preview: basic_sac_plot.png
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+draft: false
+categories:
+  - R
+  - vegan
+  - Species accumulation curves
+---
+
+```{r setup, eval=FALSE, echo = F}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Background 
+
+Today, we are going to look at how to compute and plot species 
+accumulation curves (hereafter 'SAC') using the amazing `vegan` package. SAC's are extremely popular in ecological analyses as they allow us to evaluate whether performing additional sampling is required to record all of the insect species associated with a particular plant species, for example.  
+
+In this session, we are going to cover the most basic SAC - observed richness.
+Observed species richness (hereafter '*S*') simply tells us:  
+* how many species we have recorded, to date, and   
+* whether more surveys could yield new additional species.   
+* But, it **DOES NOT** tell us how many species could be in the community (i.e. we cannot extrapolate) - we will cover how to extrapolate species richness in a later post.  
+
+### Data 
+
+Let's load in a typical community richness dataset (species abundance matrix). This dataset represents the insect community associated with the shurb, *Lycium ferocissimum*, in South Africa. 
+
+```{r, echo = TRUE}
+# Load required packages 
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, 
+               tidyr, 
+               janitor,
+               vegan)
+
+# Read in data 
+sp_comm <- readr::read_csv("https://raw.githubusercontent.com/guysutton/CBC_coding_club/master/data_raw/species_abundance_matrix_ex.csv") %>%
+  # Clean column names 
+  janitor::clean_names()
+
+# Check data entry 
+dplyr::glimpse(sp_comm)
+
+```
+
+
+```{r, results = FALSE, include = FALSE}
+
+# Set ggplot theme
+theme_set(theme_classic() +
+            theme(panel.border = element_rect(colour = "black", fill = NA),
+                  axis.text = element_text(colour = "black"),
+                  axis.title.x = element_text(margin = unit(c(2, 0, 0, 0), "mm")),
+                  axis.title.y = element_text(margin = unit(c(0, 4, 0, 0), "mm")),
+                  legend.position = "none"))
+```
+
+### Basic species accumulation curve
+
+Now it is time to compute our species accumulation curve. To do this, we will use the `poolaccum` function from the `vegan` R package. Notice the first few columns are site description variables (i.e. not species abundances). We need to remove these columns, and only input the columns containing species abundances. 
+
+```{r sac, echo = TRUE}
+sac_raw <- sp_comm %>%
+  # Remove site decsription variables 
+  dplyr::select(-c(provinces, climatic_zones, site, season, haplotype)) %>%
+  # Compute SAC
+  vegan::poolaccum(.)
+```
+
+We now need to extract our observed species richness (*S*) estimates.  
+
+* N - No. of surveys (i.e. survey effort)  
+* S - Observed species richness  
+* lower2.5 - lower 95% confidence interval of *S*  
+* upper97.5 - upper 95% confidence interval of *S*  
+
+
+```{r result, echo = TRUE}
+# Extract observed richness (S) estimate 
+obs <- data.frame(summary(sac_raw)$S, check.names = FALSE)
+colnames(obs) <- c("N", "S", "lower2.5", "higher97.5", "std")
+head(obs)
+``` 
+
+### Make a plot 
+
+Finally, we can plot the desired species accumulation curve. Ultimately, we would like to see our *S* estimate and the 95% confidence intervals reach an asymptote (flat line) on the y-axis. This would indicate that performing additional surveys is highly unlikely to yield additional insects on the plant we have surveyed. 
+
+```{r curve, echo = TRUE}
+obs %>%
+  ggplot(data = ., aes(x = N,
+                       y = S)) +
+  # Add confidence intervals
+  geom_ribbon(aes(ymin = lower2.5,
+                  ymax = higher97.5),
+              alpha = 0.5,
+              colour = "gray70") +
+  # Add observed richness line 
+  geom_line() +
+  labs(x = "No. of surveys",
+       y = "Observed richness",
+       subtitle = "More surveys are required to find all the insects on this plant")
+
+```
+
+```{r save_plot, eval = FALSE, echo = FALSE, out.width = "100%"}
+ggsave(
+  "./_posts/2022-01-14-species-accumulation-cures-in-r-part-1/basic_sac_plot.png",
+  width = 8,
+  height = 6,
+  dpi = 600
+)
+```
+
+```{r render_plot, eval = F, echo = FALSE, out.width = "100%"}
+knitr::include_graphics(here::here("./_posts/2022-01-14-species-accumulation-cures-in-r-part-1/basic_sac_plot.png"), dpi = NA)
+```
