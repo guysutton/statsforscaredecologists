@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" version="1.0">
+  <url>
+    <loc>https://statsforscaredecologists.netlify.app/about.html</loc>
+    <lastmod>2021-08-04T21:53:18+02:00</lastmod>
+  </url>
+  <url>
+    <loc>https://statsforscaredecologists.netlify.app/contact.html</loc>
+    <lastmod>2021-08-07T16:37:28+02:00</lastmod>
+  </url>
+  <url>
+    <loc>https://statsforscaredecologists.netlify.app/</loc>
+    <lastmod>2022-02-09T23:16:51+02:00</lastmod>
+  </url>
+  <url>
+    <loc>https://statsforscaredecologists.netlify.app/posts/2022-03-24-building-your-first-bayesian-glm-using-turingjl-in-julia/</loc>
+    <lastmod>2022-03-31T12:06:14+02:00</lastmod>
+  </url>
+  <url>
+    <loc>https://statsforscaredecologists.netlify.app/posts/2022-02-09-automating-model-fitting-in-r-using-functional-programming/</loc>
+    <lastmod>2022-02-10T11:25:44+02:00</lastmod>
+  </url>
+  <url>
+    <loc>https://statsforscaredecologists.netlify.app/posts/2022-01-15-import-and-combine-multiple-csv-files-using-r-and-julia/</loc>
+    <lastmod>2022-01-15T14:49:47+02:00</lastmod>
+  </url>
+  <url>
+    <loc>https://statsforscaredecologists.netlify.app/posts/2022-01-14-species-accumulation-cures-in-r-part-1/</loc>
+    <lastmod>2022-01-14T17:45:18+02:00</lastmod>
+  </url>
+  <url>
+    <loc>https://statsforscaredecologists.netlify.app/posts/2021-09-17-adding-italics-to-ggplot-figures/</loc>
+    <lastmod>2021-09-30T11:10:07+02:00</lastmod>
+  </url>
+  <url>
+    <loc>https://statsforscaredecologists.netlify.app/posts/2021-08-11-gaussian-glm-in-julia/</loc>
+    <lastmod>2021-08-19T19:09:48+02:00</lastmod>
+  </url>
+  <url>
+    <loc>https://statsforscaredecologists.netlify.app/posts/2021-08-04-gaussian-general-linear-model-glm/</loc>
+    <lastmod>2021-08-15T21:22:28+02:00</lastmod>
+  </url>
+  <url>
+    <loc>https://statsforscaredecologists.netlify.app/posts/welcome/</loc>
+    <lastmod>2021-08-04T21:45:20+02:00</lastmod>
+  </url>
+</urlset>

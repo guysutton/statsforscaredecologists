@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:distill="https://distill.pub/journal/" version="2.0">
+  <channel>
+    <title>Stats for Scared Ecologists</title>
+    <link>https://statsforscaredecologists.netlify.app/</link>
+    <atom:link href="https://statsforscaredecologists.netlify.app/index.xml" rel="self" type="application/rss+xml"/>
+    <description>Stats for Scared Ecologists
+</description>
+    <generator>Distill</generator>
+    <lastBuildDate>Thu, 24 Mar 2022 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Fitting your first Bayesian GLM in Julia</title>
+      <dc:creator>Guy F. Sutton</dc:creator>
+      <link>https://statsforscaredecologists.netlify.app/posts/2022-03-24-building-your-first-bayesian-glm-using-turingjl-in-julia</link>
+      <description>Use Turing.jl to fit Bayesian regressions</description>
+      <category>Julia</category>
+      <category>GLM</category>
+      <category>Bayesian</category>
+      <category>Turing</category>
+      <category>Turing.jl</category>
+      <category>Model fitting</category>
+      <guid>https://statsforscaredecologists.netlify.app/posts/2022-03-24-building-your-first-bayesian-glm-using-turingjl-in-julia</guid>
+      <pubDate>Thu, 24 Mar 2022 00:00:00 +0000</pubDate>
+      <media:content url="https://statsforscaredecologists.netlify.app/posts/2022-03-24-building-your-first-bayesian-glm-using-turingjl-in-julia/plot_preview.png" medium="image" type="image/png" width="456" height="234"/>
+    </item>
+    <item>
+      <title>Automating model fitting in R using functional programming</title>
+      <dc:creator>Guy F. Sutton</dc:creator>
+      <link>https://statsforscaredecologists.netlify.app/posts/2022-02-09-automating-model-fitting-in-r-using-functional-programming</link>
+      <description>Using functional programming to purrr your way through fitting many models</description>
+      <category>R</category>
+      <category>tidyverse</category>
+      <category>DHARMa</category>
+      <category>R markdown</category>
+      <category>Data visualisation</category>
+      <category>purrr</category>
+      <category>Functional programming</category>
+      <category>GLM</category>
+      <category>Model diagnostics</category>
+      <guid>https://statsforscaredecologists.netlify.app/posts/2022-02-09-automating-model-fitting-in-r-using-functional-programming</guid>
+      <pubDate>Wed, 09 Feb 2022 00:00:00 +0000</pubDate>
+      <media:content url="https://statsforscaredecologists.netlify.app/posts/2022-02-09-automating-model-fitting-in-r-using-functional-programming/screenshot_appendix1.png" medium="image" type="image/png" width="961" height="644"/>
+    </item>
+    <item>
+      <title>Import and combine multiple .csv files using R and Julia</title>
+      <dc:creator>Guy F. Sutton</dc:creator>
+      <link>https://statsforscaredecologists.netlify.app/posts/2022-01-15-import-and-combine-multiple-csv-files-using-r-and-julia</link>
+      <description>Tutorial on how to import and combine multiple .csv files into a single dataframe</description>
+      <category>R</category>
+      <category>Julia</category>
+      <category>Data import</category>
+      <category>purrr</category>
+      <category>DataFrames.jl</category>
+      <category>CSV.jl</category>
+      <guid>https://statsforscaredecologists.netlify.app/posts/2022-01-15-import-and-combine-multiple-csv-files-using-r-and-julia</guid>
+      <pubDate>Sat, 15 Jan 2022 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Species accumulation curves in R: Part 1</title>
+      <dc:creator>Guy F. Sutton</dc:creator>
+      <link>https://statsforscaredecologists.netlify.app/posts/2022-01-14-species-accumulation-cures-in-r-part-1</link>
+      <description>Basic species accumulation curve</description>
+      <category>R</category>
+      <category>vegan</category>
+      <category>Species accumulation curves</category>
+      <guid>https://statsforscaredecologists.netlify.app/posts/2022-01-14-species-accumulation-cures-in-r-part-1</guid>
+      <pubDate>Fri, 14 Jan 2022 00:00:00 +0000</pubDate>
+      <media:content url="https://statsforscaredecologists.netlify.app/posts/2022-01-14-species-accumulation-cures-in-r-part-1/basic_sac_plot.png" medium="image" type="image/png" width="4800" height="3600"/>
+    </item>
+    <item>
+      <title>Adding italic species names to ggplot2 figures</title>
+      <dc:creator>Guy F. Sutton</dc:creator>
+      <link>https://statsforscaredecologists.netlify.app/posts/2021-09-17-adding-italics-to-ggplot-figures</link>
+      <description>How to add italics to ggplot figures</description>
+      <category>R</category>
+      <category>tidyverse</category>
+      <category>ggplot2</category>
+      <category>ggtext</category>
+      <category>R markdown</category>
+      <category>PalmerPenguins</category>
+      <category>Data visualisation</category>
+      <guid>https://statsforscaredecologists.netlify.app/posts/2021-09-17-adding-italics-to-ggplot-figures</guid>
+      <pubDate>Fri, 17 Sep 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://statsforscaredecologists.netlify.app/posts/2021-09-17-adding-italics-to-ggplot-figures/adding-italics-to-ggplot-figures_files/figure-html5/figure2_italics-1.png" medium="image" type="image/png" width="1248" height="768"/>
+    </item>
+    <item>
+      <title>Gaussian GLM in Julia</title>
+      <dc:creator>Guy F. Sutton</dc:creator>
+      <link>https://statsforscaredecologists.netlify.app/posts/2021-08-11-gaussian-glm-in-julia</link>
+      <description>A Julia alternative for fitting a simple GLM</description>
+      <category>Julia</category>
+      <category>GLM</category>
+      <category>Gadfly</category>
+      <category>Model diagnostics</category>
+      <category>Hypothesis testing</category>
+      <guid>https://statsforscaredecologists.netlify.app/posts/2021-08-11-gaussian-glm-in-julia</guid>
+      <pubDate>Wed, 11 Aug 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://statsforscaredecologists.netlify.app/posts/2021-08-11-gaussian-glm-in-julia/mussel_qqplot.png" medium="image" type="image/png" width="480" height="480"/>
+    </item>
+    <item>
+      <title>General Linear Model (GLM): Gaussian GLM</title>
+      <dc:creator>Guy F. Sutton</dc:creator>
+      <link>https://statsforscaredecologists.netlify.app/posts/2021-08-04-gaussian-general-linear-model-glm</link>
+      <description>A Gentle Introduction</description>
+      <category>R</category>
+      <category>tidyverse</category>
+      <category>GLM</category>
+      <category>ggplot2</category>
+      <category>Model diagnostics</category>
+      <category>DHARMa</category>
+      <category>Hypothesis testing</category>
+      <guid>https://statsforscaredecologists.netlify.app/posts/2021-08-04-gaussian-general-linear-model-glm</guid>
+      <pubDate>Wed, 04 Aug 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://statsforscaredecologists.netlify.app/posts/2021-08-04-gaussian-general-linear-model-glm/gaussian-general-linear-model-glm_files/figure-html5/glm_gaussian_single_categorical_plot-1.png" medium="image" type="image/png" width="1248" height="768"/>
+    </item>
+    <item>
+      <title>Welcome to Stats for Scared Ecologists</title>
+      <dc:creator>Guy F. Sutton</dc:creator>
+      <link>https://statsforscaredecologists.netlify.app/posts/welcome</link>
+      <description>Why this blog?</description>
+      <guid>https://statsforscaredecologists.netlify.app/posts/welcome</guid>
+      <pubDate>Fri, 30 Jul 2021 00:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
