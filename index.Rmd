@@ -1,0 +1,10 @@
+---
+title: "Stats for Scared Ecologists"
+site: distill::distill_website
+listing: posts
+---
+
+```{r add_logo, layout="l-page", echo = F, eval=T, fig.width=15, fig.asp=.20}
+library(here)
+knitr::include_graphics(here::here("./SFSE_blog_logo.png"), dpi = NA)
+```

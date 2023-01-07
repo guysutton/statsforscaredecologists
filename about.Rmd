@@ -1,0 +1,25 @@
+---
+title: "Why this blog?"
+#description: |
+#  Some additional details about the blog
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Just mentioning *statistics*, *ANOVA*, or the dreaded `R` word is enough to stir up fear and panic for many ecologists. Most of us chose ecology so that we could leave the dreadful memories of high-school calculus and algebra behind us. However, when you go to pick your undergraduate courses, the university requires all ecology majors to have some mathematics or statistics credits, nevermind your MSc or PhD advisor telling you to go perform X or Y analysis on your hard-earned data... This latter situation usually results in the student collapsing into a heap in the corner of their lab. 
+
+Statistical analyses are a multi-dimensional problem solving task, which in my opinion, can be divided into two relatively simple tasks for the common ecologist. Firstly, you obviously need to understand the statistics. This involves aspects such as picking an appropriate statistical analysis for the data you have and the questions you wish to ask, understanding what the analyses does and how to interpret the output from your analysis (read: how to explain your statistical analysis in ecological terms!). Secondly, most contemporary statistical analyses in ecology require the use of appropriate software to run your analyses. An underappreciated and infrequently discussed aspect of statistical analyses is the skill of communicating with your own computer. Anyone who has sat for days trying to figure out why their `R` code won't run properly, or even why they can't install `Python` on their computers, may stop reading at this point! 
+
+This blog is here to help the scared ecologist learn the statistical methods required for their analyses and how to run these analyses on their own computers. I will primarily be using `R`, as this appears to be the gold-standard for statistical analyses in ecology, but I will try to introduce other software as we go (e.g. `Julia`). 
+
+## Professional 
+
+My name is Guy Sutton. I am a Research Entomologist based at the Centre for Biological Control at Rhodes University in South Africa. My research integrates extensive field surveys, controlled experiments, statistical models and software development to design and deploy novel practical solutions for controlling and mitigating the negative impacts of invasive alien weeds and insects. I teach and deliver a range of statistics courses for undergraduate and graduate biology students, as well as faculty, and recently I have delivered several multi-day workshops on statistical methods in ecology.  
+
+When I am not rearing insects or debugging `R` code, you will find me hiking, drinking good coffee, playing card games and on the lookout for the next best eggs benedict around. 
+
+# Contact
+
+Please feel free to contact me on [email](mailto:statsforscaredecologists@gmail.com){target="_blank"} or [Twitter](https://twitter.com/stats_ecology){target="_blank"}, or take a look at [my research](https://scholar.google.com/citations?user=vV1bAk0AAAAJ&hl=en){target="_blank"}. 

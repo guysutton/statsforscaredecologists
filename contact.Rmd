@@ -1,0 +1,11 @@
+---
+title: "Contact me"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Contact
+
+Please feel free to contact me on [email](mailto:statsforscaredecologists@gmail.com){target="_blank"} or [Twitter](https://twitter.com/stats_ecology){target="_blank"}, or take a look at [my research](https://scholar.google.com/citations?user=vV1bAk0AAAAJ&hl=en){target="_blank"}. 
