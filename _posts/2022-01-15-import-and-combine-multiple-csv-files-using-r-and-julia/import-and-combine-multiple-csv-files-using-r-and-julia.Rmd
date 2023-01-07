@@ -1,0 +1,208 @@
+---
+title: "Import and combine multiple .csv files using R and Julia"
+description: |
+  Tutorial on how to import and combine multiple .csv files into a single dataframe
+author:
+  - name: Guy F. Sutton
+    url: https://twitter.com/stats_ecology
+date: 01-15-2022
+base_url: https://statsforscaredecologists.netlify.app/
+#preview: basic_sac_plot.png
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+draft: false
+categories:
+  - R
+  - Julia
+  - Data import
+  - purrr
+  - DataFrames.jl
+  - CSV.jl
+---
+
+
+```{r setup, eval=FALSE, echo = F}
+knitr::opts_chunk$set(echo = FALSE)
+
+# Setup Julia
+library(JuliaCall)
+#setup <- julia_setup()
+```
+
+# Background 
+
+In this post, we are going to look at how to programmatically import multiple .csv files into a single dataframe using both `R` and `Julia`. This post is motivated by a number of recent consultations I have done, whereby the user has stored their data in an often large number of separate .csv files, with each file representing a different site, month, species or some of group. However, to analyse their data, the user requires all the .csv files to be imported into a single dataframe. 
+
+Below, I am going to demonstrate how to do this using both `R` and `Julia`. I will use a toy-example whereby I have three separate .csv files, each representing data collected data from a different site. While there are only three .csv files in this example, because we are importing and combining the data programmatically, we could have 100 or 1000, or 10000 .csv files and the code would be exactly the same. 
+
+## Using R 
+
+We will use the fantastic `purrr` package in R to iteratively find each .csv file, import the data from each file, and then combine all of these files into a single dataframe. 
+
+```{r r_packages}
+# Load required packages 
+library(tidyverse)
+library(purrr)
+```
+
+### Option #1: No need to save the filename in the dataframe 
+
+In this first example, we do not need to add a column containing the file name. This option works when the .csv files have a column containing an appropriate identifier (e.g. a column containing site names). The process requires two steps:
+
+- Step 1: Point R to the folder containing the .csv files to import using the built-in `list.files` function. We have to specify the path to the file on our computer using `file.path`. Here, the .csv files are stored in a folder called `data_raw`. If you aren't using an R Project, you will need to specify the file path in full (e.g. `C:/UserName/MyDocuments/...`). We specify `pattern = ".csv` to tell `R` to only import the .csv files. 
+
+- Step 2: Use `purrr::map_dfr` to import all of the .csv files found in step 1 into a dataframe. Typically, `purrr` will import items into a list of objects. However, we explicitly use the `purrr::map_dfr` function to ensure our final data is stored in a data frame. 
+
+```{r r_data_import_basic}
+# Programatically import and combine .csv files
+data <-
+  # Step 1: Tell R where to find the .csv files you want to import
+  list.files(file.path("data_raw"),
+             full.names = TRUE,
+             pattern = ".csv") %>%
+  # Step 2: Import the files into a single dataframe
+  purrr::map_dfr(readr::read_csv)
+```
+
+Let's check that the data imported correctly... 
+
+```{r r_basic_check}
+# Is the data structure a dataframe? 
+class(data)
+
+# Look at the first 6 rows 
+head(data)
+```
+
+### Option #2: Save the filename as a column in the dataframe 
+
+In this second example, we will add a column containing the filename. This option works when the .csv files do not have a column containing an appropriate identifier (e.g. a column containing site names), but rather an appropriate identifier is present in the filename (e.g. `siteA.csv`). 
+
+The process is similar to option #1 above, however we need to add two additional arguments. Firstly, we use `purrr::set_names` to store the filename that we are importing. Thereafter, we add the `.id = "filename` argument to `purrr::map_dfr` to add a column called `filename` to our dataframe containing the filename. 
+
+```{r r_data_import_add_filename}
+# Programatically import and combine .csv files
+data_filename <-
+  # Tell R where to find the .csv files you want to import
+  list.files(file.path("data_raw"),
+             full.names = TRUE,
+             pattern = ".csv") %>%
+  # Store the filenames
+  purrr::set_names(nm = (basename(.))) %>%
+  # Import the files into a single dataframe with a column containing the filename
+  purrr::map_dfr(readr::read_csv, .id = "filename")
+```
+
+Let's see what that did. 
+
+```{r r_filename_check}
+# Is the data structure a dataframe? 
+class(data_filename)
+
+# Look at the first 6 rows 
+head(data_filename)
+```
+
+Notice the new column called `filename` containing each of the filenames each dataset came from. 
+
+The only issue with this is that we probably don't want to keep the .csv extension in the filename identifier. Let's remove it using the built-in function `tools::file_path_sans_ext`.  
+
+```{r r_data_import_add_filename_ext}
+# Programatically import and combine .csv files
+data_filename_ext <-
+  # Tell R where to find the .csv files you want to import
+  list.files(file.path("data_raw"),
+             full.names = TRUE,
+             pattern = ".csv") %>%
+  # Get filenames and remove the .csv extension code
+  purrr::set_names(nm = (basename(.) %>% tools::file_path_sans_ext())) %>%
+  # Import the files into a single dataframe with a column containing the filename
+  purrr::map_dfr(readr::read_csv, .id = "filename")
+```
+
+Let's see what that did. 
+
+```{r r_filename_ext_check}
+# Is the data structure a dataframe? 
+class(data_filename_ext)
+
+# Look at the first 6 rows 
+head(data_filename_ext)
+```
+
+## Using Julia
+
+```{julia load_packages, echo = TRUE}
+# Install required packages, if required
+#using Pkg
+#Pkg.add("DataFrames")
+#Pkg.add("CSV")
+#Pkg.add("Glob")
+
+# Load required packages (every new session)
+using CSV             # Import and process .csv files 
+using Glob            # Find files on your PC
+using DataFrames      # Work with dataframes
+
+```
+
+The first step is to point Julia to the folder containing the .csv files. Here we use the `.\` to indicate a relative file path (e.g. the `./` is the folder containing the project manifest - much like an R Project). Otherwise you can specify a full file path (e.g. e.g. `C:/UserName/MyDocuments/...`). 
+
+```{julia specify_file_path}
+# Specify file path to folder containg the .csv files 
+filepath = raw".\data_raw"
+```
+
+The next step is to use `Glob.jl` to specify that we only want to import .csv files. 
+
+```{julia search_for_csvs}
+# Search for the .csv files only
+files = Glob.glob("*.csv", filepath)
+```
+
+Now we can go ahead and actually import all the .csv files. Unlike the `purrr::map_dfr` function used earlier, each dataframe is imported as an individual element in an array, not the dataframe that we require. 
+
+```{julia import_csvs}
+# Import .csv files (they are stored as an array of elements)
+data_array = DataFrames.DataFrame.(CSV.File.(files))
+```
+
+Finally, we can convert the array of dataframes into a single dataframe. 
+
+```{julia convert_array_to_df}
+# Convert the array into a single dataframe 
+data_df = reduce(vcat, data_array)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,260 @@
+---
+title: "Automating model fitting in R using functional programming"
+description: |
+  Using functional programming to purrr your way through fitting many models 
+author:
+  - name: Guy F. Sutton
+    url: https://twitter.com/stats_ecology
+base_url: https://statsforscaredecologists.netlify.app/
+preview: screenshot_appendix1.png
+date: 2022-02-09
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+draft: false
+categories:
+  - R
+  - tidyverse
+  - DHARMa
+  - R markdown
+  - Data visualisation
+  - purrr
+  - Functional programming
+  - GLM
+  - Model diagnostics
+bibliography: biblio.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Load required packages
+if (!require("pacman"))
+  install.packages("pacman")
+pacman::p_load(
+  tidyverse,      # Basic data pre-processing and cleaning
+  glmmTMB,        # Download and use the 'Salamanders' dataset
+  DHARMa,         # Model residual diagnostics
+  pander,         # Format R markdown documents 
+  broom           # Extract tidy model summaries and coefficients
+)
+
+```
+
+# Background 
+
+A few weeks ago, I came across the tweet below from Dr. Dani Rabaiotti lamenting about having to plot hundreds of diagnostics plots of fitted models to add to a supplementary file for a manuscript. 
+
+```{r render_plot, eval = T, echo = FALSE, out.width = "100%"}
+knitr::include_graphics(here::here("./_posts/2022-02-09-automating-model-fitting-in-r-using-functional-programming/screenshot_dani_many_models.png"), dpi = NA)
+```
+
+In this blogpost, we are going to learn how to automate the process of fitting many models in R and extracting model coefficients and model diagnostics plots. We will be using *functional programming* principles to create clean, efficient and fully automated code. Thankfully, `R` has a marvelous package called `purrr` that we can use to quite easily automate basically any iterative process. 
+
+### Data 
+
+Let's load in the `Salamanders` dataset that is built-in to the `glmmTMB` package [@Price2016]. The dataset consists of counts (e.g. abundances) of different salamanders at 23 different sites, with each site sampled on 4 occassions. During each sampling event, a number of covariates were measured (e.g. water temperature [`wtemp`], day of year [`doy`], whether the site was affected by mining or not [`mined`], ect...). Please see @Price2016 for further details, or use the help function `?Salamanders`. 
+
+```{r load_data}
+# Load the Salamanders dataset from glmmTMB package 
+df <- glmmTMB::Salamanders %>%
+  janitor::clean_names()
+head(df)
+```
+
+### Model fitting 
+
+#### Step 1: Specify the model formulae you want to fit 
+
+The first step in automating the model fitting process is to specify the different model structures that you want to fit. To simplify this process, we are going to specify only four models below. However, the exact same code can be used to fit potentially hundreds or thousands of models. 
+
+The four models we are going to fit are:  
+- Model #1: Salamander counts as a function of water temperature (count ~ wtemp)  
+- Model #2: Salamander counts as a function of the day of year (count ~ doy)  
+- Model #3: Salamander counts as a function of water temperature and doy (count ~ wtemp + doy)  
+- Model #4: Salamander counts as a function of an interaction between water temperature and doy (count ~ wtemp * doy)  
+
+We use the `paste` function to specify character strings containing the different model formulae we want to fit. 
+
+```{r model_formula}
+# Specify model formulae
+formulae <- paste(
+  # Specify the response variable here
+  "count ~",
+  # Specify the X predictor variables to fit the each model here
+  # - Each line will be a different model
+  c(# Model #1: count ~ wtemp
+    "wtemp",
+    # Model #2: count ~ doy
+    "doy",
+    # Model #3: count ~ wtemp + doy
+    "wtemp + doy",
+    # Model #4: count ~ wtemp * doy
+    "wtemp * doy"))
+formulae
+```
+
+#### Step 2: Iteratively fit models  
+
+Now we get to use the marvelous `map` functions from the `purrr` package to iteratively fit many models. The `map` functions apply a function to each element of a list. In non-computer nerd terms, we use `map` to fit a GLM using each of the formulae we specified above. So, we are going to feed in the model formulae stored in `formulae` and then fit 4 different Poisson GLM's. 
+
+```{r fit_models}
+# Iteratively fit models 
+models <- tibble(formulae) %>%
+  dplyr::mutate(# Run Poisson GLM's for each formula defined above in 'formulae'
+    mods = purrr::map(formulae,
+                      ~ glm(
+                        as.formula(.),
+                        family = poisson(link = "log"),
+                        data = df
+                      )))
+models
+```
+
+The code above is equivalent to manually specifying each of the four different models, e.g.  
+
+- mod1 <- glm(count ~ wtemp, data = df, family = poisson(link = "log"))    
+- mod2 <- glm(count ~ doy, data = df, family = poisson(link = "log"))    
+- mod3 <- glm(count ~ wtemp + doy, data = df, family = poisson(link = "log"))   
+- mod4 <- glm(count ~ wtemp * doy, data = df, family = poisson(link = "log"))    
+
+#### Step 3: Extract model results  
+
+The only *problem* with our code so far is that the GLM's we fitted are stored in a list. Lists are not exactly the most intuitive objects to work with, in my opinion, at least not for beginner R users. So, the next step in our automation process is to iteratively extract the results and summary statistics for each model fit. 
+
+After fitting our GLM's, we can extract a range of model summary statistics for each model using `broom::glance`, which returns metrics such as: AIC, BIC, model deviance, the log likelihood [logLik], ect... I won't go into much detail on how to use these statistics for model selection and validation. Very simply, the model with the lowest AIC value is typically selected as the best performing model. The output of `broom::glance`, just like the GLM models, are stored in a list. Boooo. The last thing we have to do is use `tidyr::unnest` to flatten the list back into a column in a dataframe. 
+
+```{r extract_model_results}
+# Iteratively fit models and extract results 
+models <- tibble(formulae) %>%
+  dplyr::mutate(# Run Poisson GLM's for each formula defined above in 'formulae'
+    mods = purrr::map(formulae,
+                      ~ glm(
+                        as.formula(.),
+                        family = poisson(link = "log"),
+                        data = df
+                      )),
+    # Extract results and summary statistics for each model
+    # - Note how we now pass 'purrr' the 'mods' column we created 
+    #   containing a list of the models we have specified
+    # - We are no longer using the formulae, but the resulting models.
+    results = purrr::map(mods,
+                         ~ broom::glance(.))
+    ) %>%
+  # Convert the list of 'results' back into a dataframe column
+  tidyr::unnest(cols = c("results"))
+models
+```
+
+If we were going to perform model selection/inference, we would say something like model #4, which modelled salamander counts as a function of water temperature and doy, including an interaction term, was the top-performing model. This model was selected as it had the lowest AIC and log likelihood value. 
+
+#### Step 4: Plot model diagnostics
+
+Just because model #4 was the top-performing model from amongst the candidate models we fit, this doesn't mean any of these models were a good fit to the data. To remedy this, we typically want to perform some type of residual analysis to assess our models fits. My go-to approach for plotting residuals from fitted models in R is to use the [`DHARMa`](https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html) package [@Hartig2022]. Please consult the package vignette for details. 
+
+Below, let's see how we can iteratively fit each of the four candidate models (as we have done previously), and then make residual plots for each model. 
+
+```{r plot_residuals}
+# Iteratively fit models and extract results 
+model_resids <- tibble(formulae) %>%
+  dplyr::mutate(# Run Poisson GLM's for each formula defined above in 'formulae'
+    mods = purrr::map(formulae,
+                      ~ glm(
+                        as.formula(.),
+                        family = poisson(link = "log"),
+                        data = df
+                      )),
+    # Extract DHARMa residuals plots for each model
+    # - Note how we now pass 'purrr' the 'mods' column we created 
+    #   containing a list of the models we have specified
+    # - We are no longer using the formulae, but the resulting models 
+    # - We specify 'plot = F' to not print each of the residual plots as the function runs
+    resid_plots = purrr::map(mods,
+                             ~ DHARMa::simulateResiduals(., plot = F)))
+model_resids
+```
+
+This is all good and well, but the plots that are produced aren't exactly in a very usable form right now. We need to find a way to make the plots and then render them in a clean and organised fashion. 
+
+#### Step 5: Store model diagnostics plots as a R markdown appendix 
+
+Let's make the diagnostics plots and then store them in a pdf that we could submit as a supplementary file for a manuscript or appendix using `R markdown`. In the code chunk below, we repeat much of what we have done already, with a few helpful functions to clean the results plots and headers to make the creation of our PDF a bit cleaner. See the code comments below for more details. 
+
+```{r residual_plots_glue_title, warning = FALSE, message = FALSE}
+# Iteratively fit models, make diagnostics plots and clean plot outputs
+models <- tibble(formulae) %>%
+  dplyr::mutate(
+    # Run Poisson GLM's for each formula defined above in 'formulae'
+    mods = purrr::map(formulae,
+                      ~ glm(
+                        as.formula(.),
+                        family = poisson(link = "log"),
+                        data = df
+                      )),
+    # Extract DHARMa residuals plots for each model
+    # - Note how we now pass 'purrr' the 'mods' column we created
+    #   containing a list of the models we have specified
+    # - We are no longer using the formulae, but the resulting models
+    resid_plots = purrr::map(mods,
+                             ~ DHARMa::simulateResiduals(., plot = F)),
+    # Extract AICc for each model
+    AICc = purrr::map_dbl(mods,
+                          ~ MuMIn::AICc(.))
+  ) %>%
+  # Calculate delta AICc
+  dplyr::ungroup() %>%
+  dplyr::mutate(deltaAICc = round(AICc - min(AICc), digits = 2)) %>%
+  # Process the model names to make the titles for each page cleaner
+  dplyr::group_by(formulae) %>%
+  dplyr::mutate(model_no = dplyr::cur_group_rows()) %>%
+  # Here, we paste a bunch of information from different columns in our
+  # dataset and character strings (e.g. "...") to create a title
+  # for each page with the model number, the model formula and the
+  # delta AICc value of the model
+  dplyr::mutate(formulae = paste0("Model #",
+                                  model_no,
+                                  ": ",
+                                  formulae,
+                                  " (Delta AICc = ",
+                                  deltaAICc,
+                                  ")"))
+models
+```
+
+This code gives us our GLM's (stored in `mods` column), our residuals plots (stored in `resid_plots`) and a title with some summary statistics to use as a title for each plot (stored in `formulae`). 
+
+The next step is to flatten the list of residual plots and then iteratively build our pdf, whereby each residual plot is saved on its own page and with its own title. 
+
+```{r make_appendix, results = "asis", warning = FALSE, message = FALSE, eval = FALSE, fig.width = 8}
+# Automate the plotting of residual plots 
+for (i in 1:nrow(models)) {
+  
+  # Add a title for each page
+  # - The title is the character string defined in model$formulae
+  pander::pandoc.header(models$formulae[i], level = 3)
+  
+  # Add the plot for each page
+  plot(models$resid_plots[[i]]) 
+  
+  # Add a pagebreak between each model plot
+  # - Note the extra '\' needed to escape the '\newpage' call function
+  pander::pandoc.p('\\newpage')
+  
+}
+```
+
+```{r render_plot_2, eval = T, echo = FALSE, out.width = "100%"}
+knitr::include_graphics(here::here("./_posts/2022-02-09-automating-model-fitting-in-r-using-functional-programming/screenshot_appendix1.png"), dpi = NA)
+```
+
+And voila! We have a beautifully formatted pdf document with each of our residual plots and an associated informative title. I have provided a [minimal R markdown template](https://github.com/guysutton/stats_for_scared_ecologists/blob/main/_posts/2022-02-09-automating-model-fitting-in-r-using-functional-programming/make_appendix_template.Rmd) so you can make a beautiful supplementary file for your next manuscript submission. The template is available [here](https://github.com/guysutton/stats_for_scared_ecologists/blob/main/_posts/2022-02-09-automating-model-fitting-in-r-using-functional-programming/make_appendix_template.Rmd) and the example pdf file is [here](https://github.com/guysutton/stats_for_scared_ecologists/blob/main/_posts/2022-02-09-automating-model-fitting-in-r-using-functional-programming/make_appendix_template.pdf). 
+
+
+
+
+
+
+
+
+

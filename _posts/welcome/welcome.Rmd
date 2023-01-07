@@ -1,0 +1,27 @@
+---
+title: "Welcome to Stats for Scared Ecologists"
+description: |
+  Why this blog? 
+author:
+  - name: Guy F. Sutton
+    url: https://twitter.com/Guy_F_Sutton
+    affiliation: Centre for Biological Control, Rhodes University
+date: 07-30-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# Learn more about creating blogs with Distill at:
+# https://rstudio.github.io/distill/blog.html
+
+```
+
+Just mentioning *statistics*, *ANOVA*, or the dreaded `R` is enough to stir up fear and panic for many ecologists. Most of us chose ecology so that we could leave the dreadful memories of high-school calculus and algebra behind us. However, when you go to pick your undergraduate courses, the university requires all ecology majors to have some mathematics or statistics credits, nevermind your MSc or PhD advisor telling you to go perform X or Y analysis on your hard-earned data... This latter situation usually results in the student collapsing into a heap in the corner of their lab. 
+
+Statistical analyses are a multi-dimensional problem solving task, which in my opinion, can be divided into two relatively simple tasks for the common ecologist. Firstly, you obviously need to understand the statistics. This involves aspects such as picking an appropriate statistical analysis for the data you have and the questions you wish to ask, understanding what the analyses does and how to interpret the output from your analysis (read: how to explain your statistical analysis in ecological terms!). Secondly, most contemporary statistical analyses in ecology require the use of appropriate software to run your analyses. An underappreciated and infrequently discussed aspect of statistical analyses is the skill of communicating with your own computer. Anyone who has sat for days trying to figure out why their `R` code won't run properly, or even why they can't install `Python` on their computers, may stop reading at this point! 
+
+This blog is here to help the scared ecologist learn the statistical methods required for their analyses and how to run these analyses on their own computers. I will primarily be using `R`, as this appears to be the gold-standard for statistical analyses in ecology, but I will try to introduce other software as we go (e.g. `Julia`). 
